@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="cs"> 
+<head>
+    <meta charset="UTF-8"> <!-- znaková sada pro cs-->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--pro zobrazení na mobilních zařízení-->
+    <title>Kalkulačka Physical-CVSSv4</title>
+    
+    <!-- CSS -->
+    <style>
+        body { font-family: 'Open Sans', sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; }
+
+        /* Styl pro zobrazení výsledků */
+        #result-box {
+            background-color: #f2700552; 
+            padding: 20px;                  /* vnitřní mezera 20px ze všech stran */
+            border-radius: 8px;             /* zaoblené rohy */
+            border: 2px solid #ff7300;    /* rámeček */
+            margin-bottom: 30px;            /* mezera pod boxem */
+            text-align: center;             /* centrování textu */
+        }
+
+        .score-value { 
+            font-size: 2em;                 /* "2em" velikost písma 2x větší než běžný text */
+            font-weight: bold; 
+            color: #ff7300; 
+        }
+  
+        .vector-value { 
+            font-family: monospace; 
+            font-size: 1.1em;               /* "1,1em" velikost písma o 10 % větší než běžný text */
+            color: #555; 
+            word-break: break-all; 
+        }
+            
+        
+        /* Styl pro metriky a tlačítka */
+        .metric-group { margin-bottom: 25px; }  /* "25px" mezera 25px pod každou skupinou metrik */
+            
+        .metric-group h3 { 
+            margin-bottom: 4px;                 /* "margin-botoom: 4px" mezera 4px pod nadpisem */
+            font-size: 1.1em;                   /* "1,1em" velikost písma o 10 % větší než běžný text */
+            color: #333; 
+        }
+            
+        .metric-krok { 
+            font-size: 0.9em;                   /* "0,9em" velikost písma o 10 % menší než běžný text */ 
+            color: #666; 
+            margin-bottom: 10px;                /* "10px" mezera 10px pod otázkou */
+        }
+            
+        .buttons { 
+            display: flex;                      /*  tlačítka vedle sebe */
+            flex-wrap: wrap;                    /*  zalomení prvku na další řádek, když se nevejdou */
+            gap: 10px; 
+        }
+          
+        
+        /* Schování původních radio buttonů, kt budou nahrazeny ".buttons label" */
+        .buttons input[type="radio"] { display: none; }
+
+        /* Vzhled neaktivního tlačítka */
+        .buttons label {
+            padding: 10px 20px; 
+            background-color: #f2700530; color: #495057;
+            border: 2px solid transparent; 
+            border-radius: 6px; 
+            cursor: pointer;
+            transition: all 0.2s; 
+            font-weight: bold;
+        }
+
+        /* Vzhled tlačítka po přejetí myší */
+        .buttons label:hover { background-color: #ff7300; }
+
+        /* Vzhled AKTIVNÍHO tlačítka (po kliknutí) */
+        .buttons input[type="radio"]:checked + label {
+            background-color: #ff7300; 
+            color: white; 
+            border-color: #ff7300;
+        }
+
+        /* Oddělovač skupin */
+        .group-separator { 
+            border: none; 
+            border-top: 2px solid #ff7300; 
+            margin: 30px 0 20px 0; 
+        }
+        .group-title { 
+            font-size: 1.2em; 
+            font-weight: bold; 
+            color: #ff7300; 
+            margin-bottom: 20px; 
+        }
+   
+   
+   
+   </style>
+</head>
+<body>
+
+    <h1>Kalkulačka Physical-CVSSv4</h1> 
+
+    <div id="result-box"> <!--"result-box" - box pro zobrazení výsledků -->
+
+        <div>Skóre: <span id="score" class="score-value">—</span></div>
+        <!--prefix "Skóre:" a "score-value"-->
+        <!-- "id=score" JS zapíše číslo po výpočtu  ; "class=score-value" vychází z CSS -->
+
+        <div style="margin-top: 10px;">Vektor: <span id="vector" class="vector-value">Zatím nezadáno</span></div>
+        <!--"margin-top" mezera 10px nad řádkem vektor -->
+    </div>
+
+    <form id="cvss-form">
+         <!--"form" formulář, kt sdružuje všechna tlačítka -->
+
+        <div class="group-title">1. Metrika - základní metrika, část 1 (Exploitability Metrics)</div> 
+
+        {% for kod, metrika in metriky_skupiny["Základní metriky_1"].items() %}   <!-- smyčka metrik -->
+        <!--"kod" jako klíč (AV) -->
+        <!--"metrika" jako dict s label, krok, options -->
+
+        <div class="metric-group">
+             <!--pro jednu metriku -->
+
+            <h3>{{ metrika.label }}</h3>
+            <!--vypíše label metriky z p_cvss.py (AV - Vektor útoku) -->
+
+            <div class="metric-krok">{{ metrika.krok }}</div>
+            <!--vypíše otázku metriky z p_cvss.py (Krok 1: V jaké bezpečnostní zóně ...) -->
+
+            <div class="buttons"> <!-- box pro tlačíka jedné metriky -->
+                {% for val, popis in metrika.options.items() %}     <!-- smyčka s možnostmi -->
+                <!-- projde všechny možnosti jedné metriky -->
+
+                <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
+                <!-- skryté radio button; 
+                 "id" jako unikátní ID (AV_N)
+                 "name" jako název metriky (AV)
+                 "value" jako CVSS kód, kt se pošle -->
+                 
+                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                <!-- viditelný label tlačítko
+                 "for"          spojuje label se skrytým radio b.
+                 "{{ popis }}"  text tlačítka -->
+
+                {% endfor %}                                        <!-- konec smyčky s možnostmi -->
+
+            </div>
+        </div>
+        {% endfor %}     <!-- konec smyčky metrik -->
+
+        <hr class="group-separator"> <!-- oddělovací čára mezi skupinami -->
+
+        <div class="group-title">1. Metrika - základní metrika, část 2 (Vulnerable System Impact Metrics)</div>
+        {% for kod, metrika in metriky_skupiny["Základní metriky_2"].items() %}
+        <div class="metric-group">
+            <h3>{{ metrika.label }}</h3>
+            <div class="metric-krok">{{ metrika.krok }}</div>
+            <div class="buttons">
+                {% for val, popis in metrika.options.items() %}
+                <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
+                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <hr class="group-separator"> <!-- oddělovací čára mezi skupinami -->
+
+        <div class="group-title">1. Metrika - základní metrika, část 3 (Subsequent System Impact Metrics)</div>
+        {% for kod, metrika in metriky_skupiny["Základní metriky_3"].items() %}
+        <div class="metric-group">
+            <h3>{{ metrika.label }}</h3>
+            <div class="metric-krok">{{ metrika.krok }}</div>
+            <div class="buttons">
+                {% for val, popis in metrika.options.items() %}
+                <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
+                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+
+        <hr class="group-separator">  <!-- oddělovací čára mezi skupinami -->
+
+        <div class="group-title">2. Metrika - doplňková metrika (Supplemental Metrics)</div>
+        {% for kod, metrika in metriky_skupiny["Doplňková metrika"].items() %}
+        <div class="metric-group">
+            <h3>{{ metrika.label }}</h3>
+            <div class="metric-krok">{{ metrika.krok }}</div>
+            <div class="buttons">
+                {% for val, popis in metrika.options.items() %}
+                <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
+                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+
+        <hr class="group-separator">  <!-- oddělovací čára mezi skupinami -->
+
+        <div class="group-title">3. Metrika - metrika prostředí (Environmental - Security requirements Metrics)</div>
+        {% for kod, metrika in metriky_skupiny["Metrika prostředí"].items() %}
+        <div class="metric-group">
+            <h3>{{ metrika.label }}</h3>
+            <div class="metric-krok">{{ metrika.krok }}</div>
+            <div class="buttons">
+                {% for val, popis in metrika.options.items() %}
+                <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
+                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+
+        <hr class="group-separator">  <!-- oddělovací čára mezi skupinami -->
+
+        <div class="group-title">4. Metrika - metrika hrozeb (Threat Metrics)</div>
+        {% for kod, metrika in metriky_skupiny["Metrika hrozeb"].items() %}
+        <div class="metric-group">
+            <h3>{{ metrika.label }}</h3>
+            <div class="metric-krok">{{ metrika.krok }}</div>
+            <div class="buttons">
+                {% for val, popis in metrika.options.items() %}
+                <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
+                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+
+        
+    </form>
+    <script>
+        const form = document.getElementById('cvss-form');
+        // najdi formulář s id="cvss-form" a ulož ho do proměnné "form"
+
+        form.addEventListener('change', function() {
+            // fce "form.addEventListener" čeká na kliknutí tlačítka
+
+            const formData = new FormData(form); 
+            // sběr zakliknutých tlačítek z formuláře do objektu "FormData"
+
+            const selections = Object.fromEntries(formData.entries());
+                    // Object.fromEntries převede "formData" na dict ("AV:N, AC:A...")
+
+            fetch('/calculate', {   
+                // pošle požadavek na Flask route "/calculate"
+                method: 'POST',     
+                // typ požadavku
+                headers: { 'Content-Type': 'application/json' }, 
+                // určení JSON formátu Flasku 
+                body: JSON.stringify({ selections: selections })
+                // zabalí do JSON a pošle dict na Flask backend
+            })
+            .then(response => response.json())
+                // počkání na odpověď Flasku a odpověď poté převeď z JSON na objekt
+
+            .then(result => {  
+                if (result.status === 'success') {
+                    document.getElementById('score').innerText = result.score.toFixed(1);
+                    // "getElementById" a zapiš do něj skóre; zobraz 1 desetinné místo
+                    document.getElementById('vector').innerText = result.vector;
+                    // "getElementById" a zapiš do něj CVSS vektor
+
+                } else {
+                    console.error("Chyba při výpočtu: " + result.message);
+                    // pokud Flask vrátil chybu, vypiš ji do konzole (F12)
+                }
+            })
+            .catch(error => console.error('Chyba spojení:', error));
+            // pokud se nepodařilo spojit s Flaskem vůbec, vypiš chybu do konzole
+        });
+    </script>
+
+</body>
+</html>
