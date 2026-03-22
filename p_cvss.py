@@ -145,7 +145,7 @@ METRIKY = {
     },
 
     "IR": {
-        "label": "CR - Požadavky na integritu",
+        "label": "CI - Požadavky na integritu",
         "krok": "Krok 14: Jak kritická je integrita zasaženého aktiva (využitím zranitelnosti) v daném prostředí?",
         "options": {
             "X": "Nedefinováno",
