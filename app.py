@@ -2,7 +2,7 @@
 # Flask backend pro P-CVSSv4 kalkulačku
 
 import os
-from cvss import CVSS4
+from cvss import CVSS4;
 from flask import Flask, request, jsonify, render_template
 
 from p_cvss import METRIKY, sestavit_vektor
