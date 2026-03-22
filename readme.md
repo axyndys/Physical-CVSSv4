@@ -9,8 +9,8 @@ Projekt upravuje metriky a jejich popis tak, aby odpovídaly potřebám fyzické
 
 ## Prohlášení o použití nástrojů umělé inteligence
 V průběhu zpracování tohoto projektu bylo využito těchto podpůrných nástrojů umělé inteligence:
-    Google Gemini – jako podpora při debuggingu skriptu kalkulačky "Physical-CVSSv4",
-    Claude Code - jako další podpora při debuggingu skriptu a vytvoření index.html (HTML, CSS) webového rozhraní kalkulačky "Physical-CVSSv4".
+- Google Gemini – jako podpora při debuggingu skriptu kalkulačky "Physical-CVSSv4",
+- Claude Code - jako další podpora při debuggingu skriptu a vytvoření index.html (HTML, CSS) webového rozhraní kalkulačky "Physical-CVSSv4".
 
 ---
 
