@@ -17,7 +17,7 @@ V průběhu zpracování tohoto projektu bylo využito těchto podpůrných nás
 ## O projektu
 
 Standardní CVSS (Common Vulnerability Scoring System) verze 4.0 byl navržen pro hodnocení zranitelností v kybernetickém prostoru. 
-Tento projekt součástí bakalářské práce přizpůsobuje jeho metriky (prostřednictvím mapování) a terminologii prostředí fyzické bezpečnosti a zranitelnostem nacházejícím se v této doméně. Projekt může být využíván bezpečnostním specialistou k hodnocení zranitelností fyzické bezpečnosti s možností následného srovnání celkového přehledu zranitleností fyzické a kybernetické bezpečnosti. 
+Tento projekt součástí bakalářské práce přizpůsobuje jeho metriky (prostřednictvím mapování) a terminologii prostředí fyzické bezpečnosti a zranitelnostem nacházejícím se v této doméně. Projekt může být využíván bezpečnostním specialistou k hodnocení zranitelností fyzické bezpečnosti s možností následného srovnání celkového přehledu zranitelností fyzické a kybernetické bezpečnosti. 
 
 Výpočet skóre probíhá dle oficiální knihovny `cvss` (pip), přemapování metrik je vlastní logika autora, která zohledňuje např. bezpečnostní zónování, techniky sociálního inženýrství ve fyzickém světě (např. tailgating, piggybacking, pretexting).
 Technická dokumentace CVSSv4.0 je dostupná na webové stránce viz: https://www.first.org/cvss/v4-0/cvss-v40-specification.pdf.
