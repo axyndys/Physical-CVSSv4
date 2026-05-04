@@ -1,10 +1,10 @@
 # Physical-CVSS Přizpůsobená potřebám fyzické bezpečnosti
 
 Webová aplikace jako kalkulačka pro hodnocení zranitelností fyzické bezpečnosti postavená na standardu CVSSv4.0.
-Projekt upravuje metriky a jejich popis tak, aby odpovídaly potřebám fyzické bezpečnosti.
+Projekt upravuje metriky a jejich popis tak, aby odpovídaly potřebám fyzické bezpečnosti. Dostupné zde: https://physical-cvssv4.onrender.com/
 
 **Autor:** Andrea Steckerová
-**Dostupné zde**: https://physical-cvssv4.onrender.com/
+
 ---
 
 ## Prohlášení o použití nástrojů AI
