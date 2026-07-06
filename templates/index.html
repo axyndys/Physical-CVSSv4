@@ -4,7 +4,7 @@
     <meta charset="UTF-8"> <!-- znaková sada pro cs-->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--pro zobrazení na mobilních zařízení-->
-    <title>Kalkulačka Physical-CVSSv4</title>
+    <title>PhysVuln Evaluator: Kalkulátor fyzických zranitelností</title>
     <link rel="icon" type="image/png" href="/static/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
     <link rel="shortcut icon" href="/static/favicon.ico" />
@@ -15,15 +15,43 @@
     <!-- CSS -->
     <style>
         body { font-family: 'Open Sans', sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; }
+        /* Kontejner obalující nadpis i výsledek */
+        .sticky-header-container {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: #ffffff; /* DŮLEŽITÉ: Bílé pozadí, aby text zespodu neprosvítal */
+            padding-top: 3px;         /* Drobná mezera od horního okraje prohlížeče */
+            padding-bottom: 3px;      /* Mezera pod kontejnerem */
+            border-bottom: 1px solid #f2f2f2; /* Jemná čára oddělující plovoucí blok od zbytku stránky */
+        }
 
-        /* Styl pro zobrazení výsledků */
+        /* UPRAVENO: Hlavní nadpis */
+        .main-heading {
+            text-align: center;     
+            color: #333;            
+            margin-top: 0;
+            margin-bottom: 15px;    /* Zmenšeno z 30px pro kompaktnější plovoucí hlavičku */
+        }
+
+        /* Styl pro podnadpis */
+        .sub-heading {
+            display: block;         /* DŮLEŽITÉ: Donutí podnadpis skočit na nový řádek */
+            font-size: 0.55em;      /* Zmenší písmo vůči hlavnímu nadpisu (55 % velikosti) */
+            font-weight: 400;       /* Zruší tučnost textu, aby byl podnadpis jemnější */
+            color: #666;          /* Světlejší šedá barva */
+            margin-top: 5px;        /* Drobná mezera mezi nadpisem a podnadpisem */
+        }
+        /* Box pro zobrazení výsledků */
         #result-box {
-            background-color: #f2700552; 
-            padding: 20px;                  /* vnitřní mezera 20px ze všech stran */
-            border-radius: 8px;             /* zaoblené rohy */
-            border: 2px solid #ff7300;    /* rámeček */
-            margin-bottom: 30px;            /* mezera pod boxem */
-            text-align: center;             /* centrování textu */
+            /* TÝMTO TŘEM ŘÁDKŮM JSME ODEBRALI STICKY, DĚLÁ TO TEĎ RODIČ (sticky-header-container) */
+            background-color: #fff5ed;      
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+            padding: 15px;                  /* Mírně zmenšeno z 20px pro úsporu místa */
+            border-radius: 8px;             
+            border: 2px solid #ff7300;      
+            margin-bottom: 10px;            
+            text-align: center;             
         }
 
         .score-value { 
@@ -85,6 +113,41 @@
             color: white; 
             border-color: #ff7300;
         }
+        /* Tlačítko pro kopírování */
+        .copy-button {
+            margin-top: 10px;
+            background: none;               /* odstraní pozadí */
+            border: none;                   /* odstraní rámeček */
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;             /* udělá kolem ikony kulatou plochu pro hover */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        /* Velikost a výchozí barva ikony */
+        .copy-icon {
+            width: 24px;
+            height: 24px;
+            fill: #ff7300;                  /* oranžová barva */
+            transition: fill 0.2s;
+        }
+
+        /* Efekt po najetí myší - jemné šedé/oranžové pozadí */
+        .copy-button:hover {
+            background-color: rgba(255, 115, 0, 0.1); 
+        }
+
+        /* Stav po úspěšném zkopírování (ikona zezelená) */
+        .copy-button.copied .copy-icon {
+            fill: #27ae60;                  /* zelená barva */
+        }
+        
+        .copy-button.copied {
+            background-color: rgba(39, 174, 96, 0.1); /* jemné zelené pozadí */
+        }
 
         /* Oddělovač skupin */
         .group-separator { 
@@ -105,17 +168,24 @@
 </head>
 <body>
 
-    <h1>Kalkulačka Physical-CVSSv4</h1> 
+    <div class="sticky-header-container">
+        
+        <h1 class="main-heading">
+            PhysVuln Evaluator
+            <span class="sub-heading">Kalkulátor fyzických zranitelností</span>
+        </h1> 
 
-    <div id="result-box"> <!--"result-box" - box pro zobrazení výsledků -->
-
-        <div>Skóre: <span id="score" class="score-value">—</span></div>
-        <!--prefix "Skóre:" a "score-value"-->
-        <!-- "id=score" JS zapíše číslo po výpočtu  ; "class=score-value" vychází z CSS -->
-
-        <div style="margin-top: 10px;">Vektor: <span id="vector" class="vector-value">Zatím nezadáno</span></div>
-        <!--"margin-top" mezera 10px nad řádkem vektor -->
-    </div>
+        <div id="result-box"> 
+            <div>Skóre: <span id="score" class="score-value">—</span></div>
+            <div style="margin-top: 10px;">Vektor: <span id="vector" class="vector-value">Zatím nezadáno</span></div>
+            <button id="copy-btn" class="copy-button" title="Kopírovat výsledek">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="copy-icon">
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                </svg>
+            </button>
+        </div>
+        
+    </div> <form id="cvss-form">
 
     <form id="cvss-form">
          <!--"form" formulář, kt sdružuje všechna tlačítka -->
@@ -281,6 +351,40 @@
             })
             .catch(error => console.error('Chyba spojení:', error));
             // pokud se nepodařilo spojit s Flaskem vůbec, vypiš chybu do konzole
+        });
+        // KOPÍROVÁNÍ DO SCHRÁNKY
+        const copyBtn = document.getElementById('copy-btn');
+        
+        copyBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Zabrání nechtěnému odeslání formuláře (pro jistotu)
+            
+            const scoreText = document.getElementById('score').innerText;
+            const vectorText = document.getElementById('vector').innerText;
+            
+            // Ověření, zda už proběhl výpočet
+            if (scoreText === '—') {
+                alert('Zatím není co kopírovat. Prosím, naklikejte nejprve metriky.');
+                return;
+            }
+
+            // Zformátování textu, který se vloží do schránky
+            const textToCopy = `PhysVuln Skóre: ${scoreText} | Vektor: ${vectorText}`;
+            
+            // Zápis do schránky pomocí Clipboard API
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Vizuální potvrzení - přidáme zelenou CSS třídu
+                copyBtn.classList.add('copied');
+                copyBtn.title = 'Zkopírováno!'; // Změna bublinkové nápovědy
+                
+                // Vrácení tlačítka do původního stavu po 2 sekundách
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyBtn.title = 'Kopírovat výsledek';
+                }, 2000);
+            }).catch(err => {
+                console.error('Nepodařilo se zkopírovat text: ', err);
+                alert('Kopírování selhalo.');
+            });
         });
     </script>
 
