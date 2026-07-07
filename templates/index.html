@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="cs"> 
+<html lang="{{ lang }}"> 
 <head>
     <meta charset="UTF-8"> <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>PhysVuln Evaluator: Kalkulátor fyzických zranitelností</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>{{ t.page_title }}</title>
     <link rel="icon" type="image/png" href="/static/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
     <link rel="shortcut icon" href="/static/favicon.ico" />
@@ -11,7 +11,7 @@
     <link rel="manifest" href="/static/site.webmanifest" />
     
     <style>
-        /* DEFINICE BAREVNÝCH PALET */
+        /* Definice barevných palet */
         :root {
             --bg-body: #ffffff;
             --bg-header: #ffffff;
@@ -116,7 +116,7 @@
             margin-bottom: 10px;                
         }
 
-        /* OPRAVENÝ KONTEJNER PRO TLAČÍTKA (Flexbox zarovnání) */
+        /* Opravený kontejner pro tlačítka (Flexbox zarovnání) */
         .buttons { 
             display: flex;                      
             flex-wrap: wrap;                    
@@ -127,7 +127,7 @@
         /* Schování původních radio buttonů */
         .buttons input[type="radio"] { display: none; }
 
-        /* Vzhled neaktivního tlačítka (OPRAVENÝ BOX PRO PROTI PŘEKRÝVÁNÍ) */
+        /* Vzhled neaktivního tlačítka (Opravený box pro proti překrývání) */
         .buttons label {
             display: flex;                      /* Zamezí přetékání a udělá z labelu samostatný box */
             align-items: center;                /* Vertikálně vycentruje text */
@@ -214,13 +214,42 @@
             height: 24px;
             fill: var(--text-main);
         }
-        /* VÝCHOZÍ STAV (Světlý režim) */
+        /* Výchozí stav */
         .sun-icon { display: none; }        /* Slunce schováno */
         .moon-icon { display: block; }      /* Měsíc aktivní */
 
-        /* TMAVÝ REŽIM (Když má body třídu .dark-mode) */
+        /* Tmavý režim (Když má body třídu .dark-mode) */
         body.dark-mode .sun-icon { display: block; }  /* Slunce aktivní */
         body.dark-mode .moon-icon { display: none; }  /* Měsíc schováno */
+
+        /* Přepínač jazyka (umístěn symetricky vlevo, přepínač motivu je vpravo) */
+        .lang-switch {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            display: flex;
+            gap: 6px;
+        }
+        .lang-switch a {
+            display: inline-block;
+            text-decoration: none;
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: var(--btn-radio-text);
+            background-color: var(--btn-radio-bg);
+            transition: all 0.2s;
+        }
+        .lang-switch a:hover {
+            background-color: #ff7300;
+            color: #ffffff;
+        }
+        .lang-switch a.active {
+            background-color: #ff7300;
+            color: #ffffff;
+            cursor: default;
+        }
         /* Oddělovač skupin */
         .group-separator { 
             border: none; 
@@ -238,7 +267,12 @@
 <body class="dark-mode">
     
     <div class="sticky-header-container">
-        <button id="theme-toggle" class="theme-toggle-btn" title="Přepnout tmavý/světlý režim">
+        <div class="lang-switch">
+            <a href="/?lang=cs" class="{{ 'active' if lang == 'cs' else '' }}">CZ</a>
+            <a href="/?lang=en" class="{{ 'active' if lang == 'en' else '' }}">EN</a>
+        </div>
+
+        <button id="theme-toggle" class="theme-toggle-btn" title="{{ t.theme_toggle_title }}">
             <svg class="theme-icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M9.37 5.51c-.18.64-.27 1.31-.27 1.99 0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27C17.45 17.34 14.94 19 12 19c-3.86 0-7-3.14-7-7 0-2.94 1.66-5.45 4.37-6.49M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
             </svg>
@@ -249,14 +283,14 @@
         </button>
         
         <h1 class="main-heading">
-            PhysVuln Evaluator
-            <span class="sub-heading">Kalkulátor fyzických zranitelností</span>
+            {{ t.main_heading }}
+            <span class="sub-heading">{{ t.main_subheading }}</span>
         </h1>
 
         <div id="result-box"> 
-            <div>Skóre: <span id="score" class="score-value">—</span></div>
-            <div style="margin-top: 10px;">Vektor: <span id="vector" class="vector-value">Zatím nezadáno</span></div>
-            <button id="copy-btn" class="copy-button" title="Kopírovat výsledek">
+            <div>{{ t.score_label }} <span id="score" class="score-value">{{ t.score_placeholder }}</span></div>
+            <div style="margin-top: 10px;">{{ t.vector_label }} <span id="vector" class="vector-value">{{ t.vector_placeholder }}</span></div>
+            <button id="copy-btn" class="copy-button" title="{{ t.copy_button_title }}">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="copy-icon">
                     <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                 </svg>
@@ -266,84 +300,84 @@
     </div> 
 
     <form id="cvss-form">
-         <div class="group-title">1. Metrika - základní metrika, část 1 (Exploitability Metrics)</div> 
+         <div class="group-title">{{ t.group_title_exploitability }}</div> 
 
         {% for kod, metrika in metriky_skupiny["Základní metriky_1"].items() %}   <div class="metric-group">
-            <h3>{{ metrika.label }}</h3>
-            <div class="metric-krok">{{ metrika.krok }}</div>
+            <h3>{{ t[metrika.label_key] }}</h3>
+            <div class="metric-krok">{{ t[metrika.step_key] }}</div>
 
-            <div class="buttons"> {% for val, popis in metrika.options.items() %}     <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
-                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+            <div class="buttons"> {% for val, popis_key in metrika.options.items() %}     <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
+                <label for="{{ kod }}_{{ val }}">{{ t[popis_key] }}</label>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
 
-        <hr class="group-separator"> <div class="group-title">1. Metrika - základní metrika, část 2 (Vulnerable System Impact Metrics)</div>
+        <hr class="group-separator"> <div class="group-title">{{ t.group_title_vulnerable_system_impact }}</div>
         {% for kod, metrika in metriky_skupiny["Základní metriky_2"].items() %}
         <div class="metric-group">
-            <h3>{{ metrika.label }}</h3>
-            <div class="metric-krok">{{ metrika.krok }}</div>
+            <h3>{{ t[metrika.label_key] }}</h3>
+            <div class="metric-krok">{{ t[metrika.step_key] }}</div>
             <div class="buttons">
-                {% for val, popis in metrika.options.items() %}
+                {% for val, popis_key in metrika.options.items() %}
                 <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
-                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                <label for="{{ kod }}_{{ val }}">{{ t[popis_key] }}</label>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
 
-        <hr class="group-separator"> <div class="group-title">1. Metrika - základní metrika, část 3 (Subsequent System Impact Metrics)</div>
+        <hr class="group-separator"> <div class="group-title">{{ t.group_title_subsequent_system_impact }}</div>
         {% for kod, metrika in metriky_skupiny["Základní metriky_3"].items() %}
         <div class="metric-group">
-            <h3>{{ metrika.label }}</h3>
-            <div class="metric-krok">{{ metrika.krok }}</div>
+            <h3>{{ t[metrika.label_key] }}</h3>
+            <div class="metric-krok">{{ t[metrika.step_key] }}</div>
             <div class="buttons">
-                {% for val, popis in metrika.options.items() %}
+                {% for val, popis_key in metrika.options.items() %}
                 <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
-                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                <label for="{{ kod }}_{{ val }}">{{ t[popis_key] }}</label>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
 
-        <hr class="group-separator">  <div class="group-title">2. Metrika - doplňková metrika (Supplemental Metrics)</div>
+        <hr class="group-separator">  <div class="group-title">{{ t.group_title_supplemental }}</div>
         {% for kod, metrika in metriky_skupiny["Doplňková metrika"].items() %}
         <div class="metric-group">
-            <h3>{{ metrika.label }}</h3>
-            <div class="metric-krok">{{ metrika.krok }}</div>
+            <h3>{{ t[metrika.label_key] }}</h3>
+            <div class="metric-krok">{{ t[metrika.step_key] }}</div>
             <div class="buttons">
-                {% for val, popis in metrika.options.items() %}
+                {% for val, popis_key in metrika.options.items() %}
                 <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
-                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                <label for="{{ kod }}_{{ val }}">{{ t[popis_key] }}</label>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
 
-        <hr class="group-separator">  <div class="group-title">3. Metrika - metrika prostředí (Environmental - Security requirements Metrics)</div>
+        <hr class="group-separator">  <div class="group-title">{{ t.group_title_environmental }}</div>
         {% for kod, metrika in metriky_skupiny["Metrika prostředí"].items() %}
         <div class="metric-group">
-            <h3>{{ metrika.label }}</h3>
-            <div class="metric-krok">{{ metrika.krok }}</div>
+            <h3>{{ t[metrika.label_key] }}</h3>
+            <div class="metric-krok">{{ t[metrika.step_key] }}</div>
             <div class="buttons">
-                {% for val, popis in metrika.options.items() %}
+                {% for val, popis_key in metrika.options.items() %}
                 <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
-                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                <label for="{{ kod }}_{{ val }}">{{ t[popis_key] }}</label>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
 
-        <hr class="group-separator">  <div class="group-title">4. Metrika - metrika hrozeb (Threat Metrics)</div>
+        <hr class="group-separator">  <div class="group-title">{{ t.group_title_threat }}</div>
         {% for kod, metrika in metriky_skupiny["Metrika hrozeb"].items() %}
         <div class="metric-group">
-            <h3>{{ metrika.label }}</h3>
-            <div class="metric-krok">{{ metrika.krok }}</div>
+            <h3>{{ t[metrika.label_key] }}</h3>
+            <div class="metric-krok">{{ t[metrika.step_key] }}</div>
             <div class="buttons">
-                {% for val, popis in metrika.options.items() %}
+                {% for val, popis_key in metrika.options.items() %}
                 <input type="radio" id="{{ kod }}_{{ val }}" name="{{ kod }}" value="{{ val }}">
-                <label for="{{ kod }}_{{ val }}">{{ popis }}</label>
+                <label for="{{ kod }}_{{ val }}">{{ t[popis_key] }}</label>
                 {% endfor %}
             </div>
         </div>
@@ -352,6 +386,10 @@
     </form>
 
     <script>
+        // Slovník přeložených textů pro aktuální jazyk, aby k nim mělo
+        // přístup i JavaScriptové kopírování / alerty (ne jen šablona)
+        const T = {{ t | tojson }};
+
         const form = document.getElementById('cvss-form');
 
         form.addEventListener('change', function() {
@@ -375,7 +413,7 @@
             .catch(error => console.error('Chyba spojení:', error));
         });
 
-        // KOPÍROVÁNÍ DO SCHRÁNKY
+        // Kopírování výsledků do schránky
         const copyBtn = document.getElementById('copy-btn');
         
         copyBtn.addEventListener('click', function(e) {
@@ -384,31 +422,31 @@
             const scoreText = document.getElementById('score').innerText;
             const vectorText = document.getElementById('vector').innerText;
             
-            if (scoreText === '—') {
-                alert('Zatím není co kopírovat. Prosím, naklikejte nejprve metriky.');
+            if (scoreText === T.score_placeholder) {
+                alert(T.copy_alert_empty);
                 return;
             }
 
-            const textToCopy = `PhysVuln Skóre: ${scoreText} | Vektor: ${vectorText}`;
+            const textToCopy = `PhysVuln ${T.score_label} ${scoreText} | ${T.vector_label} ${vectorText}`;
             
             navigator.clipboard.writeText(textToCopy).then(() => {
                 copyBtn.classList.add('copied');
-                copyBtn.title = 'Zkopírováno!'; 
+                copyBtn.title = T.copy_button_title_copied; 
                 
                 setTimeout(() => {
                     copyBtn.classList.remove('copied');
-                    copyBtn.title = 'Kopírovat výsledek';
+                    copyBtn.title = T.copy_button_title;
                 }, 2000);
             }).catch(err => {
                 console.error('Nepodařilo se zkopírovat text: ', err);
-                alert('Kopírování selhalo.');
+                alert(T.copy_alert_failed);
             });
         });
 
-        // PŘEPÍNÁNÍ TMAVÉHO / SVĚTLÉHO REŽIMU
+        // Přepínání světlého/temného režimu
         const themeToggleBtn = document.getElementById('theme-toggle');
         
-        // Výchozí je tmavý režim z HTML. Pokud si ale uživatel minule zvolil světlý ('light'), tmavý režim vypneme.
+        // Výchozí je tmavý režim z HTML. Pokud si ale uživatel minule zvolil světlý ('light'), tmavý režim se vypne
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'light') {
             document.body.classList.remove('dark-mode');

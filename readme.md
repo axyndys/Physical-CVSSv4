@@ -5,6 +5,7 @@ Webová aplikace jako kalkulačka pro hodnocení zranitelností fyzické bezpeč
 Projekt upravuje metriky a jejich popis tak, aby odpovídaly potřebám fyzické bezpečnosti. Dostupné zde: https://physical-cvssv4.onrender.com/
 
 **Autor:** Andrea Steckerová
+
 Webová aplikace pod dřívějším názvem: Physical-CVSS Přizpůsobená potřebám fyzické bezpečnosti je součástí práce:
 STECKEROVÁ, Andrea. Propojení fyzické a kybernetické bezpečnosti při správě zranitelností v podnikovém prostředí. Online. Bakalářská práce. Ostrava: Vysoká škola báňská - Technická univerzita Ostrava, Fakulta bezpečnostního inženýrství. 2026. Dostupné z: https://theses.cz/id/hn44ov/.
 ---

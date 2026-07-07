@@ -1,194 +1,187 @@
 # Definice metrik P-CVSSv4 a sestavení vektoru pro knihovnu cvss
-# ------------------------------------------------------
-# Struktura metrik: kod_metriky -> label, krok, options
+# Struktura metrik: kod_metriky -> label_key, step_key, options
 # Hodnoty metrik: CVSS_kod -> přemapování hodnot
+#
+# POZNÁMKA K LOKALIZACI:
+# Slovník neobsahuje žádné hotové české texty určené pro uživatele.
+# Místo toho obsahuje univerzální anglické klíče (label_key, step_key, option klíče), které se ve frontendu/šabloně přeloží pomocí slovníku
+# překladů (např. cs.json / en.json). Díky tomu tento soubor vrací jen "čistá data" a lokalizace se řeší mimo něj.
 # ------------------------------------------------------
 
 METRIKY = {
     # 1. ZÁKLADNÍ METRIKA (BASE METRICS - Exploitability Metrics) - ČÁST 1
-
     "AV": {
-        "label": "AV - Vektor útoku",
-        "krok": "Krok 1: V jaké bezpečnostní zóně se nachází identifikovaná zranitelnost?",
+        "label_key": "metric_av_label",
+        "step_key": "metric_av_step",
         "options": {
-            "N": "Veřejná zóna",
-            "A": "Kontrolovaná zóna",
-            "L": "Chráněná zóna",
-            "P": "Zabezpečená zóna",
-        }
+            "N": "av_option_public_zone",
+            "A": "av_option_controlled_zone",
+            "L": "av_option_protected_zone",
+            "P": "av_option_secured_zone",
+        },
     },
-
     "AC": {
-        "label": "AC - Složitost útoku",
-        "krok": "Krok 2: Jaký typ složitosti bezpečnostních mechanismů musí útočník obejít?",
+        "label_key": "metric_ac_label",
+        "step_key": "metric_ac_step",
         "options": {
-            "L": "Nižší složitosti",
-            "H": "Vyšší složitosti",
-        }
+            "L": "ac_option_low_complexity",
+            "H": "ac_option_high_complexity",
+        },
     },
-
     "AT": {
-        "label": "AT - Podmínky pro útok",
-        "krok": "Krok 3: Vyžaduje útok specifické podmínky pro jeho provedení?",
+        "label_key": "metric_at_label",
+        "step_key": "metric_at_step",
         "options": {
-            "N": "Nevyžaduje",
-            "P": "Vyžaduje",
-        }
+            "N": "at_option_not_required",
+            "P": "at_option_required",
+        },
     },
-
     "PR": {
-        "label": "PR - Úroveň požadovaných oprávnění",
-        "krok": "Krok 4: Jakou úroveň požadovaných oprávnění potřebuje útočník před zahájením útoku?",
+        "label_key": "metric_pr_label",
+        "step_key": "metric_pr_step",
         "options": {
-            "N": "Nepotřebuje žádná oprávnění",
-            "L": "Potřebuje základní oprávnění (běžný uživatel)",
-            "H": "Potřebuje vysoká oprávnění (administrátor)",
-        }
+            "N": "pr_option_none",
+            "L": "pr_option_low",
+            "H": "pr_option_high",
+        },
     },
-
     "UI": {
-        "label": "UI - Lidský činitel",
-        "krok": "Krok 5: Potřebuje útočník k provedení útoku pomoc jiné osoby?",
-        "options":{
-            "N": "Nepotřebuje interakci jiné osoby",
-            "L": "Potřebuje omezenou interakci jiné osoby",
-            "A": "Potřebuje aktivní interakci jiné osoby",
-        }
+        "label_key": "metric_ui_label",
+        "step_key": "metric_ui_step",
+        "options": {
+            "N": "ui_option_none",
+            "L": "ui_option_limited",
+            "A": "ui_option_active",
+        },
     },
-
     # 1. ZÁKLADNÍ METRIKA (BASE METRICS - Vulnerable System Impact Metrics) - ČÁST 2
-
     "VC": {
-        "label": "VC - Důvěrnost",
-        "krok": "Krok 6: Jaká bude míra narušení důvěrnosti bezpečnostního opatření?",
-        "options":{
-            "H": "Vysoká",
-            "L": "Nízká",
-            "N": "Žádná",
-        }
+        "label_key": "metric_vc_label",
+        "step_key": "metric_vc_step",
+        "options": {
+            "H": "impact_high",
+            "L": "impact_low",
+            "N": "impact_none",
+        },
     },
-
     "VI": {
-        "label": "VI - Integrita",
-        "krok": "Krok 7: Jaká bude míra narušení integrity bezpečnostního opatření?",
+        "label_key": "metric_vi_label",
+        "step_key": "metric_vi_step",
         "options": {
-            "H": "Vysoká",
-            "L": "Nízká",
-            "N": "Žádná",
-        }
+            "H": "impact_high",
+            "L": "impact_low",
+            "N": "impact_none",
+        },
     },
-
     "VA": {
-        "label": "VA - Dostupnost",
-        "krok": "Krok 8: Jaká bude míra narušení dostupnosti bezpečnostního opatření?",
+        "label_key": "metric_va_label",
+        "step_key": "metric_va_step",
         "options": {
-            "H": "Vysoká",
-            "L": "Nízká",
-            "N": "Žádná",
-        }
+            "H": "impact_high",
+            "L": "impact_low",
+            "N": "impact_none",
+        },
     },
-
     # 1. ZÁKLADNÍ METRIKA (BASE METRICS - Subsequent System Impact Metrics) - ČÁST 3
-
     "SC": {
-        "label": "SC - Důvěrnost",
-        "krok": "Krok 9: Jaká bude míra narušení důvěrnosti aktiva dotčeného zneužitím zranitelnosti bezpečnostního opatření?",
+        "label_key": "metric_sc_label",
+        "step_key": "metric_sc_step",
         "options": {
-            "H": "Vysoká",
-            "L": "Nízká",
-            "N": "Žádná",
-        }
+            "H": "impact_high",
+            "L": "impact_low",
+            "N": "impact_none",
+        },
     },
-
     "SI": {
-        "label": "SI - Integrita",
-        "krok": "Krok 10: Jaká bude míra narušení integrity aktiva dotčeného zneužitím zranitelnosti bezpečnostního opatření?",
+        "label_key": "metric_si_label",
+        "step_key": "metric_si_step",
         "options": {
-            "H": "Vysoká",
-            "L": "Nízká",
-            "N": "Žádná",
-        }
+            "H": "impact_high",
+            "L": "impact_low",
+            "N": "impact_none",
+        },
     },
-
     "SA": {
-        "label": "SA - Dostupnost",
-        "krok": "Krok 11: Jaká bude míra narušení dostupnosti aktiva dotčeného zneužitím zranitelnosti bezpečnostního opatření?",
+        "label_key": "metric_sa_label",
+        "step_key": "metric_sa_step",
         "options": {
-            "H": "Vysoká",
-            "L": "Nízká",
-            "N": "Žádná",
-        }
-   },
-
+            "H": "impact_high",
+            "L": "impact_low",
+            "N": "impact_none",
+        },
+    },
     # 2. METRIKA - DOPLŇKOVÁ METRIKA (SUPPLEMENTAL METRICS)
-
     "S": {
-        "label": "S - Bezpečnost - zdraví, život",
-        "krok": "Krok 12: Do jaké míry může zneužití této zranitelnosti ovlivnit lidské zdraví/život?",
+        "label_key": "metric_s_label",
+        "step_key": "metric_s_step",
         "options": {
-            "P": "Vysoká / Střední",
-            "N": "Nízká / Žádná",
-        }
+            "P": "s_option_high_medium",
+            "N": "s_option_low_none",
+        },
     },
-
     # 3. METRIKA - METRIKA PROSTŘEDÍ (ENVIRONMENTAL - SECURITY REQUIREMENTS METRICS)
-
     "CR": {
-        "label": "CR - Požadavky na důvěrnost",
-        "krok": "Krok 13: Jak kritická je důvěrnost zasaženého aktiva (využitím zranitelnosti) v daném prostředí?",
+        "label_key": "metric_cr_label",
+        "step_key": "metric_cr_step",
         "options": {
-            "X": "Nedefinováno",
-            "H": "Vysoká",
-            "M": "Střední",
-            "L": "Nízká/Žádná",
-        }
+            "X": "req_undefined",
+            "H": "req_high",
+            "M": "req_medium",
+            "L": "req_low_none",
+        },
     },
-
     "IR": {
-        "label": "CI - Požadavky na integritu",
-        "krok": "Krok 14: Jak kritická je integrita zasaženého aktiva (využitím zranitelnosti) v daném prostředí?",
+        "label_key": "metric_ir_label",
+        "step_key": "metric_ir_step",
         "options": {
-            "X": "Nedefinováno",
-            "H": "Vysoká",
-            "M": "Střední",
-            "L": "Nízká/Žádná",
-        }
+            "X": "req_undefined",
+            "H": "req_high",
+            "M": "req_medium",
+            "L": "req_low_none",
+        },
     },
-
     "AR": {
-        "label": "AR - Požadavky na dostupnost",
-        "krok": "Krok 15: Jak kritická je dostupnost zasaženého aktiva (využitím zranitelnosti) v daném prostředí?",
+        "label_key": "metric_ar_label",
+        "step_key": "metric_ar_step",
         "options": {
-            "X": "Nedefinováno",
-            "H": "Vysoká",
-            "M": "Střední",
-            "L": "Nízká/Žádná",
-        }
+            "X": "req_undefined",
+            "H": "req_high",
+            "M": "req_medium",
+            "L": "req_low_none",
+        },
     },
-
     # 4. METRIKA - METRIKA HROZEB (THREAT METRICS)
-
     "E": {
-        "label": "E - Rozšířenost metody zneužití zranitelnosti",
-        "krok": "Krok 16: Jaký je stav a rozšířenost metod zneužití této zranitelnosti?",
+        "label_key": "metric_e_label",
+        "step_key": "metric_e_step",
         "options": {
-            "A": "Aktivně využívaná",
-            "P": "Omezeně využívaná",
-            "U": "Vzácně využívaná",
-        }
-    }
+            "A": "e_option_active",
+            "P": "e_option_limited",
+            "U": "e_option_rare",
+        },
+    },
 }
 # ------------------------------------------------------
 # POŘADÍ METRIK VE VEKTORU
 # Knihovna cvss vyžaduje přesné pořadí – neměnit!
 # ------------------------------------------------------
 
-VEKTOR_POŘADÍ = [  #VEKTOR_POŘADÍ (velkými písmeny jako konvence v .py - psaní konstant)
-    "AV", "AC", "AT", "PR", "UI",
-    "VC", "VI", "VA",
-    "SC", "SI", "SA",
+VEKTOR_POŘADÍ = [  # VEKTOR_POŘADÍ (velkými písmeny jako konvence v .py - psaní konstant)
+    "AV",
+    "AC",
+    "AT",
+    "PR",
+    "UI",
+    "VC",
+    "VI",
+    "VA",
+    "SC",
+    "SI",
+    "SA",
     "S",
-    "CR", "IR", "AR",
+    "CR",
+    "IR",
+    "AR",
     "E",
 ]
 
@@ -196,18 +189,21 @@ VEKTOR_POŘADÍ = [  #VEKTOR_POŘADÍ (velkými písmeny jako konvence v .py - p
 # SESTAVENÍ VEKTORU
 # Přijme dict (slovník) { "AV": "N", "AC": "L", ... }
 # Vrátí string "CVSS:4.0/AV:N/AC:L/..."
+# (Vektor obsahuje jen CVSS kódy, žádný lidský text - lokalizace se ho netýká.)
 # ------------------------------------------------------
 
-def sestavit_vektor(selections: dict) -> str: #definuj funkci: "sestav_vektor", kt přijme parametr selections (výběr uživatele) a vrátí str 
-                    # (ve tvaru: dict - datové typu párů klíč (AV) : hodnota (N))
-    parts = [
-        f"{k}:{selections[k]}" #f"...." (jako f-string) - pro sestavení textu s proměnnými (k, selections [k])
-        # proměnná k - jako klíč metriky ("AV") --> 
-        #                                           {k} dosadí aktuální klíč metriky (AV)
-        # proměnná selections [k] - jako  hodnota metriky ("N") --> 
-        #                                           {selections [k]} dosadí aktuálního hodnotu metriky (N)
 
-        for k in VEKTOR_POŘADÍ #projde metriky ve správném pořadí
-        if k in selections #přeskočí metriky, kt uživatel ještě nevybrals
+def sestavit_vektor(
+    selections: dict,
+) -> str:  # definuj funkci: "sestav_vektor", kt přijme parametr selections (výběr uživatele) a vrátí str
+    # (ve tvaru: dict - datové typu párů klíč (AV) : hodnota (N))
+    parts = [
+        f"{k}:{selections[k]}"  # f"...." (jako f-string) - pro sestavení textu s proměnnými (k, selections [k])
+        # proměnná k - jako klíč metriky ("AV") -->
+        #                                           {k} dosadí aktuální klíč metriky (AV)
+        # proměnná selections [k] - jako  hodnota metriky ("N") -->
+        #                                           {selections [k]} dosadí aktuálního hodnotu metriky (N)
+        for k in VEKTOR_POŘADÍ  # projde metriky ve správném pořadí
+        if k in selections  # přeskočí metriky, kt uživatel ještě nevybrals
     ]
-    return "CVSS:4.0/" + "/".join(parts) #prefix + spojení "parts" lomítkem
+    return "CVSS:4.0/" + "/".join(parts)  # prefix + spojení "parts" lomítkem

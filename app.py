@@ -1,24 +1,75 @@
 # app.py
 # Flask backend pro P-CVSSv4 kalkulačku
 
+import json
 import os
+
 from cvss import CVSS4
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, session
 
 from p_cvss import METRIKY, sestavit_vektor
 
 app = Flask(__name__)
 
+# Session potřebuje podepisovací klíč (bez něj Flask uložení jazyka do
+# session odmítne). V produkci (serveru) přes proměnnou prostředí.
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "moje-domaci-tajne-heslo-21354350454dsfdfd4561dfqqcdfklshdhqtgufbbymeoiw658fg5f6odzkuisv4d6fdff35",
+)
 
-# ------------------------------------------------------
+# Vícejazyčnost (i18n)
+# Slovníky překladů jsou v /lang/cs.json a /lang/en.json
+# Klíč se do slovníku podívá podle jazyka uloženého v session,
+# případně podle URL parametru ?lang=xx, který má přednost
+# a zároveň se session přepíše, aby si prohlížeč jazyk "pamatoval".
+
+
+LANG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lang")
+SUPPORTED_LANGUAGES = ["cs", "en"]
+DEFAULT_LANGUAGE = "cs"
+
+
+def nacti_preklady():
+    """Načte oba jazykové slovníky ze souborů do paměti (při startu appky)."""
+    preklady = {}
+    for lang in SUPPORTED_LANGUAGES:
+        cesta = os.path.join(LANG_DIR, f"{lang}.json")
+        with open(cesta, encoding="utf-8") as f:
+            preklady[lang] = json.load(f)
+    return preklady
+
+
+# Slovníky se načtou jen jednou při startu serveru, ne při každém requestu
+PREKLADY = nacti_preklady()
+
+
+def zjisti_jazyk() -> str:
+    """
+    Zjistí, jaký jazyk se má použít:
+    1) pokud přijde URL parametr ?lang=cs/en, použije se a uloží do session
+    2) jinak se použije jazyk uložený v session (uživatel si ho zvolil dříve)
+    3) jinak výchozí jazyk (čeština)
+    """
+    lang_z_url = request.args.get("lang")
+
+    if lang_z_url in SUPPORTED_LANGUAGES:
+        session["lang"] = lang_z_url
+        return lang_z_url
+
+    return session.get("lang", DEFAULT_LANGUAGE)
+
+
 # HLAVNÍ STRÁNKA
-# Předá definici metrik do HTML šablony –
-# šablona z nich dynamicky vygeneruje tlačítka
-# ------------------------------------------------------
+# Předá definici metrik i přeložené texty do HTML šablony –
+# šablona z nich dynamicky vygeneruje tlačítka a popisky
 
 
 @app.route("/")
 def index():
+    aktualni_jazyk = zjisti_jazyk()
+    t = PREKLADY[aktualni_jazyk]  # slovník textů pro aktuální jazyk
+
     # Rozdělení metrik do skupin pro šablonu
     metriky_skupiny = {
         "Základní metriky_1": {
@@ -37,15 +88,17 @@ def index():
         "Metrika hrozeb": {k: METRIKY[k] for k in ["E"] if k in METRIKY},
     }
     return render_template(
-        "index.html", metriky=METRIKY, metriky_skupiny=metriky_skupiny
+        "index.html",
+        metriky=METRIKY,
+        metriky_skupiny=metriky_skupiny,
+        t=t,
+        lang=aktualni_jazyk,
     )
 
 
-# ------------------------------------------------------
 # VÝPOČET SKÓRE
 # Frontend pošle JSON: { "selections": {"AV":"N", "AC":"L", "AT":"N"} }
 # Backend sestaví vektor, spočítá skóre, vrátí výsledek
-# ------------------------------------------------------
 
 
 @app.route("/calculate", methods=["POST"])
@@ -55,7 +108,7 @@ def calculate():
 
     if not data:
         return jsonify(
-            {"status": "error", "message": "Žádná data"}
+            {"status": "error", "message": "error_no_data"}
         ), 400  # "400" jako bad request
 
     selections = data.get("selections", {})
@@ -63,7 +116,7 @@ def calculate():
 
     if not selections:
         return jsonify(
-            {"status": "error", "message": "Žádné výběry"}
+            {"status": "error", "message": "error_no_selections"}
         ), 400  # pokud selections neexistuje, použij prázdný dict
 
     # metrika S - pokud je S:P, přepíše SC, SI, SA na H
@@ -92,9 +145,7 @@ def calculate():
         return jsonify({"status": "error", "message": str(e)}), 400
 
 
-# ------------------------------------------------------
 # SPUŠTĚNÍ SERVERU
-# ------------------------------------------------------
 
 if __name__ == "__main__":
     # Server se na lokálu spustí v debug módu.
