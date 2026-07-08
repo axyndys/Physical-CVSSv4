@@ -7,7 +7,7 @@ import os
 from cvss import CVSS4
 from flask import Flask, request, jsonify, render_template, session
 
-from p_cvss import METRIKY, sestavit_vektor
+from p_cvss import METRIKY, sestavit_vektor, urcit_kritickost
 
 app = Flask(__name__)
 
@@ -133,11 +133,12 @@ def calculate():
 
     try:
         c = CVSS4(vektor)  # "c" z knihovny cvss
+        skore = float(c.base_score)
         return jsonify(
             {
                 "status": "success",
-                "score": float(c.base_score),
-                "rating": c.severities()[0],  # None / Low / Medium / High / Critical
+                "score": skore,
+                "severity_key": urcit_kritickost(skore),
                 "vector": c.clean_vector(),
             }
         )

@@ -87,5 +87,11 @@
   "e_option_rare": "Rarely exploited",
 
   "error_no_data": "No data received",
-  "error_no_selections": "No selections received"
+  "error_no_selections": "No selections received",
+  "severity_label": "Severity:",
+  "severity_none": "None",
+  "severity_low": "Low",
+  "severity_medium": "Medium",
+  "severity_high": "High",
+  "severity_critical": "Critical"
 }

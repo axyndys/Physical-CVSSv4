@@ -2,11 +2,11 @@
 # Struktura metrik: kod_metriky -> label_key, step_key, options
 # Hodnoty metrik: CVSS_kod -> přemapování hodnot
 
-# POZNÁMKA:
+# POZN:
 # Slovník neobsahuje žádné hotové české texty určené pro uživatele.
 # Místo toho obsahuje univerzální anglické klíče (label_key, step_key, option klíče), které se ve frontendu/šabloně přeloží pomocí slovníku
 # překladů (např. cs.json / en.json). Díky tomu tento soubor vrací jen "čistá data" a lokalizace se řeší mimo něj.
-# ------------------------------------------------------
+
 
 METRIKY = {
     # 1. ZÁKLADNÍ METRIKA (BASE METRICS - Exploitability Metrics) - ČÁST 1
@@ -161,10 +161,10 @@ METRIKY = {
         },
     },
 }
-# ------------------------------------------------------
+
 # POŘADÍ METRIK VE VEKTORU
 # Knihovna cvss vyžaduje přesné pořadí – neměnit!
-# ------------------------------------------------------
+
 
 VEKTOR_POŘADÍ = [  # VEKTOR_POŘADÍ (velkými písmeny jako konvence v .py - psaní konstant)
     "AV",
@@ -185,12 +185,11 @@ VEKTOR_POŘADÍ = [  # VEKTOR_POŘADÍ (velkými písmeny jako konvence v .py - 
     "E",
 ]
 
-# ------------------------------------------------------
+
 # SESTAVENÍ VEKTORU
 # Přijme dict (slovník) { "AV": "N", "AC": "L", ... }
 # Vrátí string "CVSS:4.0/AV:N/AC:L/..."
 # (Vektor obsahuje jen CVSS kódy, žádný lidský text - lokalizace se ho netýká.)
-# ------------------------------------------------------
 
 
 def sestavit_vektor(
@@ -207,3 +206,27 @@ def sestavit_vektor(
         if k in selections  # přeskočí metriky, kt uživatel ještě nevybrals
     ]
     return "CVSS:4.0/" + "/".join(parts)  # prefix + spojení "parts" lomítkem
+
+
+# URČENÍ SEVERITY
+# Přijme číselné skóre (0.0 - 10.0) a podle pevně daných hranic
+# vrátí univerzální anglický klíč (ne hotový text), který se
+# na frontendu přeloží pomocí slovníku t/T (cs.json / en.json).
+
+
+def urcit_kritickost(
+    score: float,
+) -> str:  # definuj funkci "urcit_kritickost", kt přijme parametr score (číselné skóre) a vrátí str (klíč kritičnosti)
+    if score == 0:
+        return "severity_none"
+    elif 0 < score < 4:
+        return "severity_low"
+    elif 4 <= score < 7:
+        return "severity_medium"
+    elif 7 <= score < 9:
+        return "severity_high"
+    elif 9 <= score <= 10:
+        return "severity_critical"
+    else:
+        # pojistka pro neočekávanou hodnotu mimo platný rozsah CVSS skóre
+        return "severity_none"
