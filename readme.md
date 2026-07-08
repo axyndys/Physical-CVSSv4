@@ -4,8 +4,8 @@ PhysVuln Evaluator
 
 A Web-Based Scoring Tool for Physical Security Vulnerabilities in Converged Vulnerability Management. The PhysVuln Evaluator is available via: https://physical-cvssv4.onrender.com/
 
-The web application, formerly known as Physical-CVSS and tailored to the needs of physical security, is part of the work:
-STECKEROVÁ, Andrea. Propojení fyzické a kybernetické bezpečnosti při správě zranitelností v podnikovém prostředí. Online. Bakalářská práce. Ostrava: Vysoká škola báňská - Technická univerzita Ostrava, Fakulta bezpečnostního inženýrství. 2026. Available from: https://theses.cz/id/hn44ov/.
+The web application, formerly known as Physical-CVSS and tailored to the needs of physical security, is part of the thesis:
+STECKEROVÁ, Andrea. Integrating physical and cyber security in vulnerability management within an enterprise environment. Online. Bachelor´s thesis . Ostrava: VSB - Technical university of Ostrava, Faculty of Safety Engineering. 2026. Available from: https://theses.cz/id/hn44ov/.
 
 ---
 **Autor:** Andrea Steckerová
@@ -13,8 +13,8 @@ STECKEROVÁ, Andrea. Propojení fyzické a kybernetické bezpečnosti při sprá
 ---
 ## Statement on the use of AI tools
 The following artificial intelligence tools were used during the development of this project:
-- Google Gemini – to assist with debugging the "Physical-CVSSv4" calculator script,
-- Claude Code – to further assist with debugging the script and creating the index.html (HTML, CSS) design for the “Physical-CVSSv4” calculator’s web interface, which was subsequently modified by the author.
+- Google Gemini – to assist with debugging the previous version ("Physical-CVSSv4") of PhysVuln Evaluator code,
+- Claude Code – to further assist with debugging the code and creating the index.html (HTML, CSS) design for the previous version (“Physical-CVSSv4”) calculator’s web interface, which was subsequently modified by the author.
 
 
 ---
@@ -39,7 +39,7 @@ The following artificial intelligence tools were used during the development of 
 
 ## Abstract
 
-PhysVuln Evaluator is a web-based decision-support tool designed to provide a systematic, quantifiable, and repeatable methodology for assessing the severity of physical security vulnerabilities within organizations that adopt a converged approach to security risk management, i.e., the unified governance of both cyber and physical threat domains. The application addresses a long-standing methodological asymmetry between the highly standardized vulnerability scoring practices established in the information security domain and the comparatively fragmented, often qualitative and subjective, approaches historically applied to the evaluation of physical security deficiencies such as inadequately protected access zones, weak perimeter barriers, or insufficient technical surveillance measures.
+The PhysVuln Evaluator (Physical Vulnerability Evaluator) web application is designed as a tool with interactive features intended for the systematic assessment of physical security vulnerabilities in the field of converged vulnerability management, using a semi-quantitative approach. The application’s goal is to provide security professionals with a unified, repeatable, and data-driven output that enables them to effectively assess and prioritize physical security vulnerabilities. Another benefit of the application is the ability to subsequently compare these findings with an overall overview of vulnerabilities in physical and cybersecurity and to highlight their interconnections. The application addresses a long-standing methodological asymmetry between the highly standardized vulnerability scoring practices established in the information security domain and the comparatively fragmented, often qualitative and subjective, approaches historically applied to the evaluation of physical security deficiencies such as inadequately protected access zones, weak perimeter barriers, or insufficient technical surveillance measures.
 
 The core contribution of this tool is the adaptation of the **Common Vulnerability Scoring System version 4.0 (CVSS v4.0)** — the de facto industry standard for scoring software vulnerabilities — into a structurally analogous framework applicable to physical security contexts. This adapted methodology is internally referred to as **P-CVSS (Physical CVSS)**. It preserves the hierarchical metric-group structure and machine-readable vector notation of CVSS v4.0 while redefining the semantic content of individual metrics to reflect physical, rather than digital, attack surfaces and consequences.
 
@@ -51,13 +51,13 @@ CVSS v4.0, maintained by the **Forum of Incident Response and Security Teams (FI
 
 The theoretical premise underlying PhysVuln Evaluator is that this same structural logic — separating *exploitability* from *impact*, and further separating impact on the *directly affected asset* from impact *propagated to subsequent, dependent assets* — is fully transferable to the physical security domain. In both domains, the severity of a vulnerability is a function of comparable underlying factors: the attacker's positional or logical proximity to the target, the complexity of the countermeasures that must be circumvented, the level of pre-existing privilege or access required, and the degree of dependency on interaction with another human actor (e.g., social engineering or tailgating in the physical context).
 
-A key domain-specific extension introduced by P-CVSS is the explicit treatment of **human health and life safety** as a first-class supplemental metric, reflecting the fact that, unlike purely informational vulnerabilities, the exploitation of physical security weaknesses may directly endanger human life. This is operationalized through a scoring rule in which a high or medium safety impact automatically escalates the confidentiality, integrity, and availability impact on subsequent systems to their maximum value, in accordance with a precautionary principle that prioritizes the protection of persons over purely material or informational considerations.
+A key domain-specific extension introduced by P-CVSS is the explicit treatment of **human health and life security** as a first-class supplemental metric, reflecting the fact that, unlike purely informational vulnerabilities, the exploitation of physical security weaknesses may directly endanger human life. This is operationalized through a scoring rule in which a high or medium safety impact automatically escalates the confidentiality, integrity, and availability impact on subsequent systems to their maximum value, in accordance with a precautionary principle that prioritizes the protection of persons over purely material or informational considerations.
 
 ---
 
 ## Metric Taxonomy
 
-The evaluation model is organized into four hierarchical metric groups, collectively comprising sixteen individual metrics. Each metric is presented to the assessor as a closed set of mutually exclusive options, rather than free-text input, in order to minimize recording error and enforce terminological consistency across assessors.
+The evaluation model is organized into four hierarchical metric groups, collectively comprising sixteen individual steps. Each metric is presented to the assessor as a closed set of mutually exclusive options, rather than free-text input, in order to minimize recording error and enforce terminological consistency across assessors.
 
 ### 1. Base Metrics — Exploitability
 
@@ -297,7 +297,7 @@ Both translation dictionaries are loaded once into memory at application startup
 As an academic prototype, PhysVuln Evaluator is subject to several limitations that warrant disclosure:
 
 - **Unofficial adaptation.** P-CVSS is an independent, unofficial adaptation of the CVSS v4.0 methodology. It is not endorsed, certified, or maintained by FIRST.org, and the redefinition of metric semantics for the physical domain has not undergone the same degree of multi-stakeholder consensus validation as the original CVSS specification.
-- **Absence of empirical calibration.** The mapping between physical security conditions and individual metric values, as well as the severity thresholds themselves, are inherited directly from the CVSS v4.0 model without independent empirical validation against real-world physical incident data.
+- **Absence of empirical calibration.** The mapping between physical security conditions and individual metric values, as well as the severity thresholds themselves, are inherited directly from the CVSS v4.0 model without independent empirical validation against real-world physical vulnerabilities data.
 - **Session-based, non-persistent state.** The current implementation does not persist assessment results to a database; each evaluation exists only within the browser session unless manually exported via the copy function.
 - **Single-user, non-collaborative design.** The tool does not currently support multi-assessor workflows, audit trails of who selected which values, or historical comparison between successive assessments of the same asset.
 
